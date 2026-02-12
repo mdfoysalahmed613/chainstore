@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { PurchaseWithTemplate } from "@/lib/types";
 import { Download, ExternalLink, Package } from "lucide-react";
+import Image from "next/image";
 
 export default function PurchasesPage() {
   const { user, loading: authLoading } = useAuth();
@@ -73,14 +74,23 @@ export default function PurchasesPage() {
               key={purchase.id}
               className="rounded-xl border bg-card overflow-hidden"
             >
-              <div className="aspect-16/8 bg-muted/50 relative">
-                <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-primary/5 to-primary/10">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                    <span className="text-lg font-bold text-primary">
-                      {purchase.templates.name[0]}
-                    </span>
+              <div className="aspect-16/8 bg-muted/50 relative overflow-hidden">
+                {purchase.templates.preview_image_url ? (
+                  <Image
+                    src={purchase.templates.preview_image_url}
+                    alt={purchase.templates.name}
+                    className="h-full w-full object-cover"
+                    fill
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-primary/5 to-primary/10">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                      <span className="text-lg font-bold text-primary">
+                        {purchase.templates.name[0]}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="p-4 space-y-3">
                 <div className="flex items-start justify-between gap-2">

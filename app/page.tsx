@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/server";
 import { TemplateCard } from "@/components/template-card";
+import { HeroButtons } from "@/components/hero-buttons";
 import type { Template } from "@/lib/types";
 import { ArrowRight, Zap, Shield, Download } from "lucide-react";
 
@@ -19,8 +21,8 @@ export default async function HomePage() {
     <div className="flex flex-col">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32 lg:py-40">
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-transparent" />
+        <div className="relative mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-2xl text-center">
             <Badge variant="secondary" className="mb-6 px-3 py-1 text-xs font-medium">
               Pay with Crypto
@@ -33,17 +35,7 @@ export default async function HomePage() {
               High-quality, production-ready templates for your next project.
               Purchase with cryptocurrency through HotPay &mdash; fast, secure, and decentralized.
             </p>
-            <div className="mt-8 flex items-center justify-center gap-3">
-              <Button size="lg" asChild>
-                <Link href="/store">
-                  Browse Templates
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/auth/login">Get Started</Link>
-              </Button>
-            </div>
+            <HeroButtons />
           </div>
         </div>
       </section>
@@ -135,10 +127,14 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-                <span className="text-xs font-bold text-primary-foreground">C</span>
-              </div>
-              <span className="text-sm font-bold font-brand bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">ChainStore</span>
+              <Image
+                src="/logo.png"
+                alt="ChainStore"
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-md dark:brightness-110"
+              />
+              <span className="text-sm font-brand bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">ChainStore</span>
             </div>
             <p className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} ChainStore. All rights reserved.

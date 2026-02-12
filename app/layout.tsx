@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, Geist_Mono, Caprasimo } from "next/font/google";
 import { AuthProvider } from "@/components/auth-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
@@ -14,10 +15,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const caprasimo = Caprasimo({
+  variable: "--font-caprasimo",
   subsets: ["latin"],
-  weight: ["700"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -32,12 +33,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased`}>
-        <AuthProvider>
-          <Navbar />
-          <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${geistMono.variable} ${caprasimo.variable} antialiased`}>
+        <ThemeProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

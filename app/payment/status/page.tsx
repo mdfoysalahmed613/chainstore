@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useState, useCallback, useRef } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Clock, XCircle, Loader2 } from "lucide-react";
@@ -13,74 +12,66 @@ type PaymentState = "polling" | "completed" | "failed" | "not_found";
 function PaymentStatusContent() {
   const searchParams = useSearchParams();
   const memo = searchParams.get("memo");
-  const { user } = useAuth();
-  const supabase = createClient();
+  const { loading: authLoading } = useAuth();
 
   const [status, setStatus] = useState<PaymentState>("polling");
   const [templateName, setTemplateName] = useState<string>("");
-  const pollCountRef = useRef(0);
-
-  const pollCount = useCallback(() => {
-    return pollCountRef.current;
-  }, []);
-
-  const checkStatus = useCallback(async () => {
-    if (!memo || !user) return null;
-
-    // First check our database
-    const { data } = await supabase
-      .from("purchases")
-      .select("payment_status, templates(name)")
-      .eq("memo", memo)
-      .eq("user_id", user.id)
-      .single();
-
-    if (!data) return "not_found";
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const purchase = data as any;
-    const name = purchase.templates?.name;
-    if (name) {
-      setTemplateName(name);
-    }
-
-    if (purchase.payment_status === "completed") return "completed";
-    if (purchase.payment_status === "failed") return "failed";
-
-    // Every 3rd poll, also verify via HOT Pay API as webhook fallback
-    pollCountRef.current += 1;
-    if (pollCount() % 3 === 0) {
-      try {
-        const res = await fetch(`/api/orders/verify?memo=${encodeURIComponent(memo)}`);
-        if (res.ok) {
-          const result = await res.json();
-          if (result.payment_status === "completed") return "completed";
-          if (result.payment_status === "failed") return "failed";
-        }
-      } catch {
-        // Verification failed, continue polling database
-      }
-    }
-
-    return "polling";
-  }, [memo, user, supabase, pollCount]);
+  const notFoundCountRef = useRef(0);
 
   useEffect(() => {
-    if (!memo || !user) return;
+    if (!memo) return;
+    // Wait for auth to finish loading before polling
+    if (authLoading) return;
 
     let cancelled = false;
     let timeoutId: NodeJS.Timeout;
+
+    async function checkStatus(): Promise<PaymentState> {
+      try {
+        const res = await fetch(`/api/orders/verify?memo=${encodeURIComponent(memo!)}`);
+
+        if (res.ok) {
+          const result = await res.json();
+          if (result.template_name) {
+            setTemplateName(result.template_name);
+          }
+          if (result.payment_status === "completed") return "completed";
+          if (result.payment_status === "failed") return "failed";
+          if (result.payment_status === "pending") {
+            notFoundCountRef.current = 0;
+            return "polling";
+          }
+        }
+
+        if (res.status === 404) {
+          notFoundCountRef.current += 1;
+          // Only show "not found" after 10 consecutive failures (~30s)
+          if (notFoundCountRef.current >= 10) {
+            return "not_found";
+          }
+          return "polling";
+        }
+
+        // For auth errors, keep polling (auth may not be ready yet)
+        if (res.status === 401) {
+          return "polling";
+        }
+
+        return "polling";
+      } catch {
+        return "polling";
+      }
+    }
 
     async function poll() {
       const result = await checkStatus();
       if (cancelled) return;
 
-      if (result && result !== "polling") {
+      if (result !== "polling") {
         setStatus(result);
         return;
       }
 
-      // Poll every 3 seconds
       timeoutId = setTimeout(poll, 3000);
     }
 
@@ -89,6 +80,7 @@ function PaymentStatusContent() {
     // Stop polling after 5 minutes
     const maxTimeout = setTimeout(() => {
       cancelled = true;
+      setStatus("not_found");
     }, 5 * 60 * 1000);
 
     return () => {
@@ -96,7 +88,7 @@ function PaymentStatusContent() {
       clearTimeout(timeoutId);
       clearTimeout(maxTimeout);
     };
-  }, [memo, user, checkStatus]);
+  }, [memo, authLoading]);
 
   if (!memo) {
     return (

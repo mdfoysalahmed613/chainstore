@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/components/auth-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,10 +29,14 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <span className="text-sm font-bold text-primary-foreground">C</span>
-          </div>
-          <span className="text-xl font-bold tracking-tight font-brand bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <Image
+            src="/logo.png"
+            alt="ChainStore"
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-lg dark:brightness-110"
+          />
+          <span className="text-xl font-brand tracking-tight bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             ChainStore
           </span>
         </Link>
@@ -44,7 +50,8 @@ export function Navbar() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
           {loading ? (
             <div className="h-8 w-20 animate-pulse rounded-md bg-muted" />
           ) : user ? (

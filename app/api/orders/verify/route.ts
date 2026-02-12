@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Check if already completed in our database
     const { data: purchase } = await supabase
       .from("purchases")
-      .select("id, payment_status, transaction_id")
+      .select("id, payment_status, transaction_id, templates(name)")
       .eq("memo", memo)
       .eq("user_id", user.id)
       .single();
@@ -37,14 +37,23 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "order_not_found" }, { status: 404 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const templateName = (purchase as any).templates?.name || null;
+
     if (purchase.payment_status === "completed") {
-      return NextResponse.json({ payment_status: "completed" });
+      return NextResponse.json({
+        payment_status: "completed",
+        template_name: templateName,
+      });
     }
 
     // Poll HOT Pay API to check payment status
     const apiToken = process.env.HOTPAY_API_TOKEN;
     if (!apiToken) {
-      return NextResponse.json({ payment_status: purchase.payment_status });
+      return NextResponse.json({
+        payment_status: purchase.payment_status,
+        template_name: templateName,
+      });
     }
 
     const hotpayRes = await fetch(
@@ -57,14 +66,20 @@ export async function GET(request: NextRequest) {
     );
 
     if (!hotpayRes.ok) {
-      return NextResponse.json({ payment_status: purchase.payment_status });
+      return NextResponse.json({
+        payment_status: purchase.payment_status,
+        template_name: templateName,
+      });
     }
 
     const hotpayData = await hotpayRes.json();
     const payments = hotpayData.payments || [];
 
     if (payments.length === 0) {
-      return NextResponse.json({ payment_status: purchase.payment_status });
+      return NextResponse.json({
+        payment_status: purchase.payment_status,
+        template_name: templateName,
+      });
     }
 
     const payment = payments[0];
@@ -79,10 +94,16 @@ export async function GET(request: NextRequest) {
         .eq("id", purchase.id);
 
       if (updateError) {
-        return NextResponse.json({ payment_status: purchase.payment_status });
+        return NextResponse.json({
+          payment_status: purchase.payment_status,
+          template_name: templateName,
+        });
       }
 
-      return NextResponse.json({ payment_status: "completed" });
+      return NextResponse.json({
+        payment_status: "completed",
+        template_name: templateName,
+      });
     }
 
     if (payment.status === "FAILED") {
@@ -94,10 +115,16 @@ export async function GET(request: NextRequest) {
         })
         .eq("id", purchase.id);
 
-      return NextResponse.json({ payment_status: "failed" });
+      return NextResponse.json({
+        payment_status: "failed",
+        template_name: templateName,
+      });
     }
 
-    return NextResponse.json({ payment_status: purchase.payment_status });
+    return NextResponse.json({
+      payment_status: purchase.payment_status,
+      template_name: templateName,
+    });
   } catch {
     return NextResponse.json(
       { error: "internal_server_error" },
