@@ -154,7 +154,7 @@ function buildPaymentUrl(
   memo: string,
 ): string {
   const baseUrl =
-    process.env.NEXT_PUBLIC_HOTPAY_BASE_URL || "https://app.hot-labs.org";
+    process.env.NEXT_PUBLIC_HOTPAY_BASE_URL || "https://pay.hot-labs.org";
   const itemId = hotpayItemId || process.env.NEXT_PUBLIC_HOTPAY_ITEM_ID || "";
   const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/hotpay/webhook`;
   const returnUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/payment/status?memo=${memo}`;
@@ -167,5 +167,5 @@ function buildPaymentUrl(
     return_url: returnUrl,
   });
 
-  return `${baseUrl}/pay?${params.toString()}`;
+  return `${baseUrl}/payment?${params.toString()}`;
 }
