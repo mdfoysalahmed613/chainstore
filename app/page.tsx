@@ -19,7 +19,7 @@ export default async function HomePage() {
     <div className="flex flex-col">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-transparent" />
         <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-2xl text-center">
             <Badge variant="secondary" className="mb-6 px-3 py-1 text-xs font-medium">
@@ -138,7 +138,7 @@ export default async function HomePage() {
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
                 <span className="text-xs font-bold text-primary-foreground">C</span>
               </div>
-              <span className="text-sm font-semibold">ChainStore</span>
+              <span className="text-sm font-bold font-brand bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">ChainStore</span>
             </div>
             <p className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} ChainStore. All rights reserved.

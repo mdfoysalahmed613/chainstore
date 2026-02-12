@@ -30,7 +30,9 @@ export function Navbar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <span className="text-sm font-bold text-primary-foreground">C</span>
           </div>
-          <span className="text-lg font-bold tracking-tight">ChainStore</span>
+          <span className="text-xl font-bold tracking-tight font-brand bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            ChainStore
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

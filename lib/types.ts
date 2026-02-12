@@ -11,6 +11,7 @@ export type Template = {
   download_url: string;
   tech_stack: string[];
   features: string[];
+  hotpay_item_id: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -21,6 +22,7 @@ export type Purchase = {
   user_id: string;
   template_id: string;
   transaction_id: string | null;
+  memo: string | null;
   payment_status: string;
   amount: number;
   currency: string;

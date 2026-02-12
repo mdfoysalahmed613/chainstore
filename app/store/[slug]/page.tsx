@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { Template } from "@/lib/types";
 import { ArrowLeft, Check, ExternalLink, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 
 export default function TemplateDetailPage() {
   const params = useParams();
@@ -61,43 +62,30 @@ export default function TemplateDetailPage() {
 
     setPurchasing(true);
 
-    // Create a pending purchase record
-    const { data: purchase, error } = await supabase
-      .from("purchases")
-      .insert({
-        user_id: user.id,
-        template_id: template.id,
-        amount: template.price,
-        currency: "USD",
-        payment_status: "pending",
-      })
-      .select()
-      .single();
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ template_id: template.id }),
+      });
 
-    if (error) {
-      // If already purchased (unique constraint violation)
-      if (error.code === "23505") {
-        setPurchased(true);
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.error === "already_purchased") {
+          setPurchased(true);
+          setPurchasing(false);
+          return;
+        }
         setPurchasing(false);
         return;
       }
+
+      // Redirect to HOT Pay payment page
+      window.location.href = data.payment_url;
+    } catch {
       setPurchasing(false);
-      return;
     }
-
-    // Redirect to HotPay checkout
-    // In production, you would construct the HotPay payment URL with your API key
-    // and the purchase details. For now, we create the purchase record and
-    // the webhook will update it when payment is confirmed.
-    //
-    // Example HotPay URL format:
-    // https://hotpay.com/pay?merchant=YOUR_MERCHANT_ID&amount=AMOUNT&currency=USD
-    //   &order_id=PURCHASE_ID&callback_url=YOUR_WEBHOOK_URL&return_url=YOUR_RETURN_URL
-    //
-    // Replace with your actual HotPay integration:
-    const hotpayUrl = `https://app.hotpay.com/checkout?amount=${template.price}&currency=USD&order_id=${purchase.id}&description=${encodeURIComponent(template.name)}&return_url=${encodeURIComponent(window.location.origin + "/dashboard")}`;
-
-    window.location.href = hotpayUrl;
   }
 
   if (loading) {
@@ -106,7 +94,7 @@ export default function TemplateDetailPage() {
         <div className="animate-pulse space-y-8">
           <div className="h-6 w-32 rounded bg-muted" />
           <div className="grid gap-10 lg:grid-cols-2">
-            <div className="aspect-[16/10] rounded-xl bg-muted" />
+            <div className="aspect-16/10 rounded-xl bg-muted" />
             <div className="space-y-4">
               <div className="h-8 w-48 rounded bg-muted" />
               <div className="h-4 w-full rounded bg-muted" />
@@ -144,17 +132,25 @@ export default function TemplateDetailPage() {
       <div className="grid gap-10 lg:grid-cols-5">
         {/* Preview */}
         <div className="lg:col-span-3">
-          <div className="aspect-[16/10] overflow-hidden rounded-xl border bg-muted/50">
-            <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-              <div className="text-center">
-                <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-                  <span className="text-2xl font-bold text-primary">
-                    {template.name[0]}
-                  </span>
+          <div className="aspect-16/10 overflow-hidden rounded-xl border bg-muted/50">
+            {template.preview_image_url ? (
+              <Image
+                src={template.preview_image_url}
+                alt={template.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-linear-to-br from-primary/5 to-primary/10">
+                <div className="text-center">
+                  <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                    <span className="text-2xl font-bold text-primary">
+                      {template.name[0]}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{template.category}</p>
                 </div>
-                <p className="text-sm text-muted-foreground">{template.category}</p>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Long description */}
