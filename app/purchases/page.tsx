@@ -96,24 +96,24 @@ export default function PurchasesPage() {
                 </div>
                 <div className="flex gap-2">
                   <Button size="sm" className="flex-1 gap-1.5" asChild>
-                    <a
+                    <Link
                       href={purchase.templates.download_url}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <Download className="h-3 w-3" />
                       Download
-                    </a>
+                    </Link>
                   </Button>
                   {purchase.templates.demo_url && (
                     <Button size="sm" variant="outline" asChild>
-                      <a
+                      <Link
                         href={purchase.templates.demo_url}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         <ExternalLink className="h-3 w-3" />
-                      </a>
+                      </Link>
                     </Button>
                   )}
                 </div>
