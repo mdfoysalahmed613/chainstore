@@ -138,6 +138,7 @@ export default function TemplateDetailPage() {
                 src={template.preview_image_url}
                 alt={template.name}
                 className="h-full w-full object-cover"
+                fill
               />
             ) : (
               <div className="flex h-full items-center justify-center bg-linear-to-br from-primary/5 to-primary/10">
