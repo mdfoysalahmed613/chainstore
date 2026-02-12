@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -18,10 +18,16 @@ function PaymentStatusContent() {
 
   const [status, setStatus] = useState<PaymentState>("polling");
   const [templateName, setTemplateName] = useState<string>("");
+  const pollCountRef = useRef(0);
+
+  const pollCount = useCallback(() => {
+    return pollCountRef.current;
+  }, []);
 
   const checkStatus = useCallback(async () => {
     if (!memo || !user) return null;
 
+    // First check our database
     const { data } = await supabase
       .from("purchases")
       .select("payment_status, templates(name)")
@@ -40,8 +46,24 @@ function PaymentStatusContent() {
 
     if (purchase.payment_status === "completed") return "completed";
     if (purchase.payment_status === "failed") return "failed";
+
+    // Every 3rd poll, also verify via HOT Pay API as webhook fallback
+    pollCountRef.current += 1;
+    if (pollCount() % 3 === 0) {
+      try {
+        const res = await fetch(`/api/orders/verify?memo=${encodeURIComponent(memo)}`);
+        if (res.ok) {
+          const result = await res.json();
+          if (result.payment_status === "completed") return "completed";
+          if (result.payment_status === "failed") return "failed";
+        }
+      } catch {
+        // Verification failed, continue polling database
+      }
+    }
+
     return "polling";
-  }, [memo, user, supabase]);
+  }, [memo, user, supabase, pollCount]);
 
   useEffect(() => {
     if (!memo || !user) return;

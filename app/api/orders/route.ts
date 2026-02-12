@@ -157,14 +157,14 @@ function buildPaymentUrl(
     process.env.NEXT_PUBLIC_HOTPAY_BASE_URL || "https://pay.hot-labs.org";
   const itemId = hotpayItemId || process.env.NEXT_PUBLIC_HOTPAY_ITEM_ID || "";
   const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/hotpay/webhook`;
-  const returnUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/payment/status?memo=${memo}`;
+  const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/payment/status?memo=${memo}`;
 
   const params = new URLSearchParams({
     item_id: itemId,
     amount: amount.toString(),
     memo,
     webhook_url: webhookUrl,
-    return_url: returnUrl,
+    redirect_url: redirectUrl,
   });
 
   return `${baseUrl}/payment?${params.toString()}`;

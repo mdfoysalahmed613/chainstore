@@ -5,23 +5,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // HOT Pay webhook payload fields per documentation
-    const { memo, status, near_trx, sender_id, amount, item_id } = body;
+    // HOT Pay webhook payload per documentation:
+    // { type, item_id, status, memo, amount, amount_float, amount_usd, near_trx }
+    const { memo, status, near_trx } = body;
 
     if (!memo || !status) {
       return NextResponse.json(
         { error: "Missing required fields: memo and status" },
         { status: 400 },
       );
-    }
-
-    // Validate authorization header if HOTPAY_API_TOKEN is configured
-    const apiToken = process.env.HOTPAY_API_TOKEN;
-    if (apiToken) {
-      const authHeader = request.headers.get("authorization");
-      if (authHeader !== apiToken) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
     }
 
     // Use service role key — no user session available in webhooks
@@ -52,24 +44,25 @@ export async function POST(request: NextRequest) {
     // Only mark as completed when HOT Pay status is SUCCESS
     const paymentStatus = status === "SUCCESS" ? "completed" : "failed";
 
-    // Build transaction ID from NEAR transaction hash
-    const transactionId = near_trx || null;
-
-    await supabase
+    const { error: updateError } = await supabase
       .from("purchases")
       .update({
         payment_status: paymentStatus,
-        transaction_id: transactionId,
+        transaction_id: near_trx || null,
       })
       .eq("id", purchase.id);
+
+    if (updateError) {
+      return NextResponse.json(
+        { error: "Failed to update purchase" },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
       success: true,
       payment_status: paymentStatus,
       memo,
-      sender_id: sender_id || null,
-      amount: amount || null,
-      item_id: item_id || null,
     });
   } catch {
     return NextResponse.json(
