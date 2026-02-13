@@ -44,7 +44,7 @@ export function Navbar() {
         <nav className="hidden items-center gap-6 md:flex">
           <Link
             href="/store"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-sm font-medium text-muted-foreground  transition-colors hover:text-foreground"
           >
             Templates
           </Link>
