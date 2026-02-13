@@ -34,10 +34,10 @@ export function Navbar() {
             alt="ChainStore"
             width={48}
             height={48}
-            className="h-12 w-12 rounded-lg dark:brightness-110"
+            className="h-9 w-9 rounded-lg dark:brightness-110"
           />
-          <span className="text-xl font-brand tracking-tight bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            ChainStore
+          <span className="text-xl font-brand text-primary">
+            Chain Store
           </span>
         </Link>
 

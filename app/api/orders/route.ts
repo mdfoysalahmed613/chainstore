@@ -123,6 +123,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (purchaseError) {
+      console.error("Purchase insert error:", purchaseError);
       return NextResponse.json(
         { error: "failed_to_create_order" },
         { status: 500 },
@@ -140,7 +141,8 @@ export async function POST(request: NextRequest) {
       memo,
       payment_url: paymentUrl,
     });
-  } catch {
+  } catch (error) {
+    console.error("POST /api/orders error:", error);
     return NextResponse.json(
       { error: "internal_server_error" },
       { status: 500 },
