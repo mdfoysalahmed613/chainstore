@@ -115,9 +115,10 @@ function PaymentStatusContent() {
             Waiting for payment confirmation from the network.
             This may take a moment.
           </p>
-          <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            Checking payment status...
+          <div className="mt-6 flex flex-col gap-2">
+            <Button asChild>
+              <Link href="/store">Back to Store</Link>
+            </Button>
           </div>
         </>
       )}
