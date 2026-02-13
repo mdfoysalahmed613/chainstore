@@ -1,6 +1,6 @@
 # ChainStore
 
-A modern template marketplace built with Next.js and powered by cryptocurrency payments through [HOT Pay](https://hot-labs.org). Browse, purchase, and instantly download production-ready web templates using crypto on the NEAR blockchain.
+A modern template marketplace built with Next.js and powered by cryptocurrency payments through [HOT Pay](https://hot-labs.org/pay). Browse, purchase, and instantly download production-ready web templates using crypto on the NEAR blockchain.
 
 Built for the **NEAR Protocol Hackathon**, sponsored by **HOT Pay** ($3,000 prize track).
 

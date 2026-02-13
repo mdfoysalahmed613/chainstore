@@ -32,9 +32,9 @@ export function Navbar() {
           <Image
             src="/logo.png"
             alt="ChainStore"
-            width={32}
-            height={32}
-            className="h-8 w-8 rounded-lg dark:brightness-110"
+            width={48}
+            height={48}
+            className="h-12 w-12 rounded-lg dark:brightness-110"
           />
           <span className="text-xl font-brand tracking-tight bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             ChainStore
