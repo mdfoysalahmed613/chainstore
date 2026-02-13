@@ -6,7 +6,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { PurchaseWithTemplate } from "@/lib/types";
 import { Download, ExternalLink, Package } from "lucide-react";
@@ -131,9 +130,6 @@ export default function DashboardPage() {
                       Purchased {new Date(purchase.purchased_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <Badge variant="secondary" className="text-[10px] shrink-0">
-                    {purchase.templates.category}
-                  </Badge>
                 </div>
                 <div className="flex gap-2">
                   <Button size="sm" className="flex-1 gap-1.5" asChild>

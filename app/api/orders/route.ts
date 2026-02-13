@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
       .from("templates")
       .select("id, name, price, hotpay_item_id")
       .eq("id", template_id)
-      .eq("is_active", true)
       .single();
 
     if (templateError || !template) {
@@ -159,7 +158,7 @@ function buildPaymentUrl(
     process.env.NEXT_PUBLIC_HOTPAY_BASE_URL || "https://pay.hot-labs.org";
   const itemId = hotpayItemId || process.env.NEXT_PUBLIC_HOTPAY_ITEM_ID || "";
   const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/hotpay/webhook`;
-  const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/payment/status?memo=${memo}`;
+  const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL || ""}/payment/status`;
 
   const params = new URLSearchParams({
     item_id: itemId,

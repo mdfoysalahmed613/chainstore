@@ -29,7 +29,6 @@ export default function TemplateDetailPage() {
         .from("templates")
         .select("*")
         .eq("slug", slug)
-        .eq("is_active", true)
         .single();
 
       setTemplate(data as Template | null);
@@ -149,7 +148,6 @@ export default function TemplateDetailPage() {
                       {template.name[0]}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{template.category}</p>
                 </div>
               </div>
             )}
@@ -182,9 +180,6 @@ export default function TemplateDetailPage() {
         {/* Sidebar */}
         <div className="lg:col-span-2">
           <div className="sticky top-24 rounded-xl border bg-card p-6 shadow-sm">
-            <Badge variant="secondary" className="mb-3">
-              {template.category}
-            </Badge>
             <h1 className="text-2xl font-bold">{template.name}</h1>
             <p className="mt-2 text-sm text-muted-foreground">{template.description}</p>
 

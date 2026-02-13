@@ -13,7 +13,6 @@ export default async function HomePage() {
   const { data: templates } = await supabase
     .from("templates")
     .select("*")
-    .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(3);
 

@@ -5,13 +5,15 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Clock, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
 type PaymentState = "polling" | "completed" | "failed" | "not_found";
 
 function PaymentStatusContent() {
   const searchParams = useSearchParams();
-  const memo = searchParams.get("memo");
+  const rawMemo = searchParams.get("memo");
+  // Strip any trailing query params HOT Pay may have appended to the memo
+  const memo = rawMemo?.split("?")[0] || rawMemo;
   const { loading: authLoading } = useAuth();
 
   const [status, setStatus] = useState<PaymentState>("polling");

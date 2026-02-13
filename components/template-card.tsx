@@ -24,21 +24,20 @@ export function TemplateCard({ template }: { template: Template }) {
                     {template.name[0]}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground">{template.category}</p>
               </div>
             </div>
           )}
         </div>
         <div className="p-4 space-y-3">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-sm leading-tight group-hover:text-primary transition-colors">
+            <h3 className="font-semibold text-base leading-tight group-hover:text-primary transition-colors">
               {template.name}
             </h3>
-            <span className="text-sm font-bold text-primary whitespace-nowrap">
+            <span className="text-base font-bold text-primary whitespace-nowrap">
               ${template.price}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
             {template.description}
           </p>
           <div className="flex flex-wrap gap-1.5">

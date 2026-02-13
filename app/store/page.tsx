@@ -7,12 +7,7 @@ export default async function StorePage() {
   const { data: templates } = await supabase
     .from("templates")
     .select("*")
-    .eq("is_active", true)
     .order("created_at", { ascending: false });
-
-  const categories = [
-    ...new Set((templates as Template[] | null)?.map((t) => t.category) ?? []),
-  ];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -22,19 +17,6 @@ export default async function StorePage() {
           Browse our collection of production-ready templates
         </p>
       </div>
-
-      {categories.length > 0 && (
-        <div className="mb-8 flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <span
-              key={category}
-              className="rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground"
-            >
-              {category}
-            </span>
-          ))}
-        </div>
-      )}
 
       {templates && templates.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
