@@ -24,7 +24,7 @@ export default async function HomePage() {
         <div className="relative mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-2xl text-center">
             <Badge variant="secondary" className="mb-6 px-3 py-1 text-xs font-medium">
-              Pay with Crypto
+              Pay with Hot Pay
             </Badge>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Premium Templates.{" "}
